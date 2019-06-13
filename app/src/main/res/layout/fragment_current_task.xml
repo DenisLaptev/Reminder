@@ -3,14 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.SplashFragment"
-    android:background="@color/colorWhite">
+    tools:context=".fragments.CurrentTaskFragment">
 
-    <ImageView
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_blank_fragment"
-        android:src="@drawable/reminder_white"
-        android:layout_gravity="center"/>
+        android:text="@string/current_task_tab"
+        android:layout_gravity="center"
+        android:textSize="35sp"/>
 
 </FrameLayout>

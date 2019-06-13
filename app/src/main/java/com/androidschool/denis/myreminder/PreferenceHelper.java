@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 
 public class PreferenceHelper {
 
+    //данная константа является ключём
+    //для свойства (отображать сплешскрин или нет) в файле preferences.
     public static final String SPLASH_IS_INVISIBLE = "splash_is_invisible";
 
 
@@ -14,6 +16,9 @@ public class PreferenceHelper {
 
     private SharedPreferences preferences;
 
+
+
+//////////Паттерн синглтон.
     private PreferenceHelper() {
 
     }
@@ -24,18 +29,22 @@ public class PreferenceHelper {
         }
         return instance;
     }
+//////////
 
     public void init(Context context) {
         this.context = context;
         preferences = context.getSharedPreferences("preferences", Context.MODE_PRIVATE);
     }
 
+
+    //передаём состояние чекбокса (отображать сплешскрин или нет) в файл preferences
     public void putBoolean(String key, boolean value) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(key, value);
         editor.apply();
     }
 
+    //получаем состояние чекбокса (отображать сплешскрин или нет) из файла preferences
     public boolean getBoolean(String key) {
         return preferences.getBoolean(key, false);
     }
