@@ -2,8 +2,7 @@
 
 
 <!--чтобы тулбар не отображался поерх сплешскрина, добавим корневой элемент FrameLayout-->
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
 
@@ -58,8 +57,23 @@
                 app:tabTextColor="@android:color/background_light" />
             <!--selected tab-->
             <!--not selected tab-->
+            <!--tabIndicatorColor  полоска под выбранной вкладкой-->
+            <!--tabSelectedTextColor  цвет текста активной вкладки-->
+            <!--tabTextColor  цвет текста НЕактивной вкладки-->
 
         </android.support.design.widget.AppBarLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_anchor="@id/pager"
+            app:layout_anchorGravity="bottom|right|end" />
+
+        <!--указание местоположения FloatingActionButton
+        app:layout_anchor="@id/pager"
+        app:layout_anchorGravity="bottom|right|end"-->
+
 
     </android.support.design.widget.CoordinatorLayout>
 </FrameLayout>

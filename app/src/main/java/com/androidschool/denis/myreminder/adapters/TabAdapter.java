@@ -8,6 +8,7 @@ import com.androidschool.denis.myreminder.fragments.CurrentTaskFragment;
 import com.androidschool.denis.myreminder.fragments.DoneTaskFragment;
 
 public class TabAdapter extends FragmentStatePagerAdapter {
+    //Адаптер - это посредник между данными и их представлением.
 
     private int numberOfTabs;
 
@@ -16,6 +17,7 @@ public class TabAdapter extends FragmentStatePagerAdapter {
      * @deprecated
      */
     public TabAdapter(FragmentManager fm, int numberOfTabs) {
+        //FragmentManager управляет фрагментами на вкладках.
         super(fm);
         this.numberOfTabs = numberOfTabs;
     }
@@ -35,6 +37,8 @@ public class TabAdapter extends FragmentStatePagerAdapter {
         }
     }
 
+
+    //Метод возвращает количество вкладок.
     @Override
     public int getCount() {
         return numberOfTabs;

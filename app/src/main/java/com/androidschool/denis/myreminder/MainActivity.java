@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+        //Создадим TabLayout и добавим вкладки
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText(R.string.current_task));
         tabLayout.addTab(tabLayout.newTab().setText(R.string.done_task));
