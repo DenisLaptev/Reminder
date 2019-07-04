@@ -12,6 +12,12 @@ public class TabAdapter extends FragmentStatePagerAdapter {
 
     private int numberOfTabs;
 
+    public static final int CURRENT_TASK_FRAGMENT_POSITION = 0;
+    public static final int DONE_TASK_FRAGMENT_POSITION = 1;
+
+    private CurrentTaskFragment currentTaskFragment;
+    private DoneTaskFragment doneTaskFragment;
+
     /**
      * @param fm
      * @deprecated
@@ -20,17 +26,21 @@ public class TabAdapter extends FragmentStatePagerAdapter {
         //FragmentManager управляет фрагментами на вкладках.
         super(fm);
         this.numberOfTabs = numberOfTabs;
+        currentTaskFragment = new CurrentTaskFragment();
+        doneTaskFragment = new DoneTaskFragment();
     }
 
     @Override
     public Fragment getItem(int i) {
+        //при каждом вызове метода getItem(int i) мы не создаём фрагменты,
+        //а возвращаем уже существующие (currentTaskFragment, doneTaskFragment)
 
         switch (i) {
             case 0:
-                return new CurrentTaskFragment();
+                return currentTaskFragment;
 
             case 1:
-                return new DoneTaskFragment();
+                return doneTaskFragment;
 
             default:
                 return null;

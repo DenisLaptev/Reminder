@@ -14,5 +14,17 @@
     <string name="current_task_tab">Current task</string>
     <string name="done_tasks_tab">Done tasks</string>
 
+    <!--Диалог для создания Таска-->
+    <string name="dialog_title">Adding tasks</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_error_empty_title">Please, enter the title.</string>
+
+    <!--hints-->
+    <string name="task_title">Title</string>
+    <string name="task_date">Date</string>
+    <string name="task_time">Time</string>
+
+
 
 </resources>

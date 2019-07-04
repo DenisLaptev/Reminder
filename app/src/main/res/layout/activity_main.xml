@@ -31,8 +31,10 @@
             android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="112dp" />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+             />
         <!--layout_marginTop чтобы предотвратить наложение тулбара на вьюпейджер-->
+        <!--app:layout_behavior добавляет возможность скрывать тулбар и таб-лэйаут при прокрутке-->
 
 
         <!--подключаем AppBarLayout для добавления вкладок (tabs)-->
@@ -46,7 +48,8 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize" />
+                android:layout_height="?attr/actionBarSize"
+                app:layout_scrollFlags="scroll|enterAlways"/>
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/tab_layout"
@@ -54,7 +57,8 @@
                 android:layout_height="?attr/actionBarSize"
                 app:tabIndicatorColor="@android:color/background_light"
                 app:tabSelectedTextColor="@android:color/background_light"
-                app:tabTextColor="@android:color/background_light" />
+                app:tabTextColor="@android:color/background_light"
+                app:layout_scrollFlags="scroll|enterAlways"/>
             <!--selected tab-->
             <!--not selected tab-->
             <!--tabIndicatorColor  полоска под выбранной вкладкой-->
@@ -67,12 +71,17 @@
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/ic_add_white_24dp"
             app:layout_anchor="@id/pager"
             app:layout_anchorGravity="bottom|right|end" />
 
         <!--указание местоположения FloatingActionButton
         app:layout_anchor="@id/pager"
         app:layout_anchorGravity="bottom|right|end"-->
+
+        <!--отступ fab от краёв экрана
+        android:layout_margin="@dimen/fab_margin"-->
 
 
     </android.support.design.widget.CoordinatorLayout>

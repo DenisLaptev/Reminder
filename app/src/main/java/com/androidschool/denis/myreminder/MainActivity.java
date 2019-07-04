@@ -2,23 +2,36 @@ package com.androidschool.denis.myreminder;
 
 
 import android.app.FragmentManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.app.DialogFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import com.androidschool.denis.myreminder.adapters.TabAdapter;
+import com.androidschool.denis.myreminder.dialog.AddingTaskDialogFragment;
+import com.androidschool.denis.myreminder.fragments.CurrentTaskFragment;
+import com.androidschool.denis.myreminder.fragments.DoneTaskFragment;
 import com.androidschool.denis.myreminder.fragments.SplashFragment;
+import com.androidschool.denis.myreminder.model.ModelTask;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AddingTaskDialogFragment.AddingTaskListener {
 
     FragmentManager fragmentManager;
 
     PreferenceHelper preferenceHelper;
+
+    TabAdapter tabAdapter;
+
+    CurrentTaskFragment currentTaskFragment;
+    DoneTaskFragment doneTaskFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         //добавление меню в action bar.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem splashItem = menu.findItem(R.id.action_splash);
+//        MenuItem secondItem = menu.findItem(R.id.second_Item);
 
         //берем значение из файла preferences при запуске приложения.
         splashItem.setChecked(preferenceHelper.getBoolean(PreferenceHelper.SPLASH_IS_INVISIBLE));
@@ -77,7 +91,12 @@ public class MainActivity extends AppCompatActivity {
             //сохраняем значение в файл preferences.
             preferenceHelper.putBoolean(PreferenceHelper.SPLASH_IS_INVISIBLE, item.isChecked());
             return true;
+
         }
+//        else if (id == R.id.second_Item) {
+//            Toast.makeText(getApplicationContext(), "Second Item", Toast.LENGTH_SHORT).show();
+//        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -99,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setText(R.string.done_task));
 
         final ViewPager viewPager = findViewById(R.id.pager);
-        TabAdapter tabAdapter = new TabAdapter(fragmentManager,2);
+        tabAdapter = new TabAdapter(fragmentManager, 2);
 
         viewPager.setAdapter(tabAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -108,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
+                //Toast.makeText(getApplicationContext(),"Selected",Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -120,7 +140,30 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        currentTaskFragment = (CurrentTaskFragment) tabAdapter.getItem(TabAdapter.CURRENT_TASK_FRAGMENT_POSITION);
+        doneTaskFragment = (DoneTaskFragment) tabAdapter.getItem(TabAdapter.DONE_TASK_FRAGMENT_POSITION);
+
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //создаём объект типа AddingTaskDialogFragment и вызываем его.
+                DialogFragment addingTaskDialogFragment = new AddingTaskDialogFragment();
+                addingTaskDialogFragment.show(fragmentManager, "addingTaskDialogFragment");
+            }
+        });
     }
 
+    @Override
+    public void onTaskAdded(ModelTask newTask) {
+        Toast.makeText(this, "Task added", Toast.LENGTH_LONG).show();
+        currentTaskFragment.addTask(newTask);
 
+    }
+
+    @Override
+    public void onTaskAddingCancel() {
+        Toast.makeText(this, "Task adding canceled", Toast.LENGTH_LONG).show();
+    }
 }
