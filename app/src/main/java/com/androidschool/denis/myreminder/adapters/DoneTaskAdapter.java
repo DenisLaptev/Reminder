@@ -11,47 +11,38 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
 import com.androidschool.denis.myreminder.R;
 import com.androidschool.denis.myreminder.Utils;
-import com.androidschool.denis.myreminder.fragments.CurrentTaskFragment;
+import com.androidschool.denis.myreminder.fragments.DoneTaskFragment;
 import com.androidschool.denis.myreminder.fragments.TaskFragment;
 import com.androidschool.denis.myreminder.model.Item;
 import com.androidschool.denis.myreminder.model.ModelTask;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class CurrentTasksAdapter extends TaskAdapter {
-    //ViewHolder - это элементы адаптера
+public class DoneTaskAdapter extends TaskAdapter {
 
-    private static final int TYPE_TASK = 0;
-    private static final int TYPE_SEPARATOR = 1;
 
-    public CurrentTasksAdapter(CurrentTaskFragment taskFragment) {
+    public DoneTaskAdapter(DoneTaskFragment taskFragment) {
         super(taskFragment);
     }
 
+    // методы onCreateViewHolder и onBindViewHolder имеют похожую реализацию,
+    // что и в классе CurrentTaskAdapter, за исключением некоторых особенностей
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
 
-        switch (viewType) {
-            case TYPE_TASK:
-                View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.model_task, viewGroup, false);
-                TextView title = (TextView) v.findViewById(R.id.tvTaskTitle);
-                TextView date = (TextView) v.findViewById(R.id.tvTaskDate);
-                CircleImageView priority = (CircleImageView) v.findViewById(R.id.cvTaskPriority);
 
-                return new TaskViewHolder(v, title, date, priority);
-//            case TYPE_SEPARATOR:
-//                break;
-            default:
-                return null;
-        }
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.model_task, viewGroup, false);
+        TextView title = (TextView) v.findViewById(R.id.tvTaskTitle);
+        TextView date = (TextView) v.findViewById(R.id.tvTaskDate);
+        CircleImageView priority = (CircleImageView) v.findViewById(R.id.cvTaskPriority);
+
+        return new TaskViewHolder(v, title, date, priority);
+
+
     }
 
     @Override
@@ -63,7 +54,6 @@ public class CurrentTasksAdapter extends TaskAdapter {
             final ModelTask task = (ModelTask) item;
             final TaskViewHolder taskViewHolder = (TaskViewHolder) viewHolder;
 
-            //две локальныйх переменные для удобства и краткости записи
             final View itemView = taskViewHolder.itemView;
             final Resources resources = itemView.getResources();
 
@@ -77,29 +67,29 @@ public class CurrentTasksAdapter extends TaskAdapter {
 
             itemView.setVisibility(View.VISIBLE);
 
-            itemView.setBackgroundColor(resources.getColor(R.color.gray_50));
+            //другой цвет (темнее) у itemView по сравнению с CurrentTaskAdapter
+            itemView.setBackgroundColor(resources.getColor(R.color.gray_200));
 
-            //устанавливаем цвета для текстовых полей TextView и CircleImageView
-            taskViewHolder.title.setTextColor(resources.getColor(R.color.primary_text_default_material_light));
-            taskViewHolder.date.setTextColor(resources.getColor(R.color.secondary_text_default_material_light));
+            taskViewHolder.title.setTextColor(resources.getColor(R.color.primary_text_disabled_material_light));
+            taskViewHolder.date.setTextColor(resources.getColor(R.color.secondary_text_disabled_material_light));
             taskViewHolder.priority.setColorFilter(resources.getColor(task.getPriorityColor()));
-            taskViewHolder.priority.setImageResource(R.drawable.ic_checkbox_blank_circle_white_48dp);
+            taskViewHolder.priority.setImageResource(R.drawable.ic_check_circle_white_48dp);
 
-            //по нажатию на элемент(таск) он обозначается, как выполненый
             taskViewHolder.priority.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    task.setStatus(ModelTask.STATUS_DONE);
-                    getTaskFragment().activity.dbHelper.update().status(task.getTimeStamp(), ModelTask.STATUS_DONE);
+                    task.setStatus(ModelTask.STATUS_CURRENT);
+                    getTaskFragment().activity.dbHelper.update().status(task.getTimeStamp(), ModelTask.STATUS_CURRENT);
 
-                    itemView.setBackgroundColor(resources.getColor(R.color.gray_200));
+                    itemView.setBackgroundColor(resources.getColor(R.color.gray_50));
 
-                    taskViewHolder.title.setTextColor(resources.getColor(R.color.primary_text_disabled_material_light));
-                    taskViewHolder.date.setTextColor(resources.getColor(R.color.secondary_text_disabled_material_light));
+                    taskViewHolder.title.setTextColor(resources.getColor(R.color.primary_text_default_material_light));
+                    taskViewHolder.date.setTextColor(resources.getColor(R.color.secondary_text_default_material_light));
                     taskViewHolder.priority.setColorFilter(resources.getColor(task.getPriorityColor()));
 
-                    //добавляем анимацию - поворот картинки вокруг вертикальной оси
-                    ObjectAnimator flipIn = ObjectAnimator.ofFloat(taskViewHolder.priority, "rotationY", -180f, 0f);
+                    //поворот в обратную сторону (+180f)
+                    ObjectAnimator flipIn = ObjectAnimator.ofFloat(taskViewHolder.priority, "rotationY", 180f, 0f);
+                    taskViewHolder.priority.setImageResource(R.drawable.ic_checkbox_blank_circle_white_48dp);
                     flipIn.addListener(new Animator.AnimatorListener() {
                         @Override
                         public void onAnimationStart(Animator animator) {
@@ -108,17 +98,14 @@ public class CurrentTasksAdapter extends TaskAdapter {
 
                         @Override
                         public void onAnimationEnd(Animator animator) {
-                            if (task.getStatus() == ModelTask.STATUS_DONE) {
-                                taskViewHolder.priority.setImageResource(R.drawable.ic_check_circle_white_48dp);
+                            if (task.getStatus() != ModelTask.STATUS_DONE) {
 
-                                //добавляем анимацию - перемещение элемента в сторону на расстояние=его длине
-                                //при этом элемент списка полностью исчезает из поля зрения
+                                //0f, -itemView.getWidth() - начальное и конечное положение при перемещении
                                 ObjectAnimator translationX = ObjectAnimator.ofFloat(itemView,
-                                        "translationX", 0f, itemView.getWidth());
+                                        "translationX", 0f, -itemView.getWidth());
 
-                                //добавляем анимацию - возвращение элемента в исходное состояние
                                 ObjectAnimator translationXBack = ObjectAnimator.ofFloat(itemView,
-                                        "translationX", itemView.getWidth(), 0f);
+                                        "translationX", -itemView.getWidth(), 0f);
 
                                 translationX.addListener(new Animator.AnimatorListener() {
                                     @Override
@@ -128,7 +115,6 @@ public class CurrentTasksAdapter extends TaskAdapter {
 
                                     @Override
                                     public void onAnimationEnd(Animator animator) {
-                                        //по окончании анимации делаем item невидимым
                                         itemView.setVisibility(View.GONE);
                                         getTaskFragment().moveTask(task);
                                         removeItem(taskViewHolder.getLayoutPosition());
@@ -145,11 +131,9 @@ public class CurrentTasksAdapter extends TaskAdapter {
                                     }
                                 });
 
-                                //объект AnimatorSet служит для запуска нескольких анимаций
-                                //в определённой последовательности
                                 AnimatorSet translationSet = new AnimatorSet();
                                 translationSet.play(translationX).before(translationXBack);
-                                translationSet.start();//запуск анимации трансляции
+                                translationSet.start();
                             }
                         }
 
@@ -164,19 +148,9 @@ public class CurrentTasksAdapter extends TaskAdapter {
                         }
                     });
 
-                    flipIn.start();//запуск анимации поворота вокруг вертикальной оси
+                    flipIn.start();
                 }
             });
-        }
-    }
-
-
-    @Override
-    public int getItemViewType(int position) {
-        if (getItem(position).isTask()) {
-            return TYPE_TASK;
-        } else {
-            return TYPE_SEPARATOR;
         }
     }
 

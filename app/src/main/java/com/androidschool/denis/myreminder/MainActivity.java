@@ -15,14 +15,18 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.androidschool.denis.myreminder.adapters.TabAdapter;
+import com.androidschool.denis.myreminder.database.DBHelper;
 import com.androidschool.denis.myreminder.dialog.AddingTaskDialogFragment;
 import com.androidschool.denis.myreminder.fragments.CurrentTaskFragment;
 import com.androidschool.denis.myreminder.fragments.DoneTaskFragment;
 import com.androidschool.denis.myreminder.fragments.SplashFragment;
+import com.androidschool.denis.myreminder.fragments.TaskFragment;
 import com.androidschool.denis.myreminder.model.ModelTask;
 
 
-public class MainActivity extends AppCompatActivity implements AddingTaskDialogFragment.AddingTaskListener {
+public class MainActivity extends AppCompatActivity
+        implements AddingTaskDialogFragment.AddingTaskListener,
+        CurrentTaskFragment.OnTaskDoneListener, DoneTaskFragment.OnTaskRestoreListener {
 
     FragmentManager fragmentManager;
 
@@ -30,8 +34,10 @@ public class MainActivity extends AppCompatActivity implements AddingTaskDialogF
 
     TabAdapter tabAdapter;
 
-    CurrentTaskFragment currentTaskFragment;
-    DoneTaskFragment doneTaskFragment;
+    TaskFragment currentTaskFragment;
+    TaskFragment doneTaskFragment;
+
+    public DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements AddingTaskDialogF
 
         PreferenceHelper.getInstance().init(getApplicationContext());
         preferenceHelper = PreferenceHelper.getInstance();
+
+        dbHelper = new DBHelper(getApplicationContext());
 
         fragmentManager = getFragmentManager();
 
@@ -158,12 +166,22 @@ public class MainActivity extends AppCompatActivity implements AddingTaskDialogF
     @Override
     public void onTaskAdded(ModelTask newTask) {
         Toast.makeText(this, "Task added", Toast.LENGTH_LONG).show();
-        currentTaskFragment.addTask(newTask);
+        currentTaskFragment.addTask(newTask,true);
 
     }
 
     @Override
     public void onTaskAddingCancel() {
         Toast.makeText(this, "Task adding canceled", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onTaskDone(ModelTask task) {
+        doneTaskFragment.addTask(task,false);
+    }
+
+    @Override
+    public void onTaskRestore(ModelTask task) {
+        currentTaskFragment.addTask(task,false);
     }
 }
