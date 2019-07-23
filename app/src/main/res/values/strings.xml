@@ -20,6 +20,11 @@
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_error_empty_title">Please, enter the title.</string>
 
+    <!--Диалог для удаления Таска-->
+    <string name="dialog_removing_message">Do you really want to delete this task?</string>
+    <!--сообщение для снекбара-->
+    <string name="removed">Removed</string>
+
     <!--hints-->
     <string name="task_title">Title</string>
     <string name="task_date">Date</string>

@@ -9,6 +9,7 @@ import android.provider.BaseColumns;
 import com.androidschool.denis.myreminder.model.ModelTask;
 
 public class DBHelper extends SQLiteOpenHelper {
+    //приложение сохраняет БД в файле на устройстве
 
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "reminder_database";
@@ -28,7 +29,10 @@ public class DBHelper extends SQLiteOpenHelper {
             + TASK_DATE_COLUMN + " LONG, " + TASK_PRIORITY_COLUMN + " INTEGER, "
             + TASK_STATUS_COLUMN + " INTEGER, " + TASK_TIME_STAMP_COLUMN + " LONG);";
 
+
+    //константы для запроса SELECT по какому-то критерию
     public static final String SELECTION_STATUS = DBHelper.TASK_STATUS_COLUMN + " = ?";
+    public static final String SELECTION_TIME_STAMP = DBHelper.TASK_TIME_STAMP_COLUMN + " = ?";
 
     private DBQueryManager queryManager;
     private DBUpdateManager updateManager;
@@ -69,5 +73,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public DBUpdateManager update() {
         return updateManager;
+    }
+
+    //удалить таск из БД
+    public void removeTask(long timeStamp) {
+        getWritableDatabase().delete(
+                TASKS_TABLE,
+                SELECTION_TIME_STAMP,
+                new String[]{Long.toBinaryString(timeStamp)}
+        );
     }
 }
