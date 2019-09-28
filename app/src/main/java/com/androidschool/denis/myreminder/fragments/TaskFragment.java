@@ -1,6 +1,7 @@
 package com.androidschool.denis.myreminder.fragments;
 
 import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import com.androidschool.denis.myreminder.R;
 import com.androidschool.denis.myreminder.adapters.CurrentTasksAdapter;
 import com.androidschool.denis.myreminder.adapters.TaskAdapter;
 import com.androidschool.denis.myreminder.alarm.AlarmHelper;
+import com.androidschool.denis.myreminder.dialog.EditTaskDialogFragment;
 import com.androidschool.denis.myreminder.model.Item;
 import com.androidschool.denis.myreminder.model.ModelTask;
 
@@ -43,32 +45,12 @@ public abstract class TaskFragment extends Fragment {
         addTaskFromDB();
     }
 
-    public void addTask(ModelTask newTask, boolean saveToDB) {
+    public abstract void addTask(ModelTask newTask, boolean saveToDB);
+    //На вкладке выполненных задач не будет сепараторов.
 
-        int position = -1;
 
-        for (int i = 0; i < adapter.getItemCount(); i++) {
-            if (adapter.getItem(i).isTask()) {
-                ModelTask task = (ModelTask) adapter.getItem(i);
-
-                //добавляем таски отсортированными по дате.
-                if (newTask.getDate() < task.getDate()) {
-                    position = i;
-                    break;//?цикл прерывается при нахождении первого элемента с бОльшей датой.
-                }
-            }
-        }
-
-        if (position != -1) {
-            adapter.addItem(position, newTask);
-        } else {
-            adapter.addItem(newTask);
-        }
-
-        //для новых тасков (saveToDB==true) будем выполнять сохраниние в БД
-        if (saveToDB) {
-            activity.dbHelper.saveTask(newTask);
-        }
+    public void updateTask(ModelTask task) {
+        adapter.updateTask(task);
     }
 
     //вызов диалогового окна для удаления таска
@@ -132,7 +114,20 @@ public abstract class TaskFragment extends Fragment {
         dialogBuilder.show();
     }
 
+    public void showTaskEditDialog(ModelTask task) {
+        DialogFragment editingTaskDialog = EditTaskDialogFragment.newInstance(task);
+        editingTaskDialog.show(getActivity().getFragmentManager(), "EditingTaskDialogFragment");
+    }
+
+    public void removeAllTasks() {
+        adapter.removeAllItems();
+
+    }
+
     public abstract void findTasks(String title);
+
+    //Чтобы не вылетало приложение при возобновлении работы из свёрнутого состояния
+    public abstract void checkAdapter();
 
     public abstract void addTaskFromDB();
 

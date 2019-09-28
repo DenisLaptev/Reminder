@@ -21,10 +21,10 @@ import com.androidschool.denis.myreminder.model.ModelTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class DoneTaskAdapter extends TaskAdapter {
+public class DoneTasksAdapter extends TaskAdapter {
 
 
-    public DoneTaskAdapter(DoneTaskFragment taskFragment) {
+    public DoneTasksAdapter(DoneTaskFragment taskFragment) {
         super(taskFragment);
     }
 

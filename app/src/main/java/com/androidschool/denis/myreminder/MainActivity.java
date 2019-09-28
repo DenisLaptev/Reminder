@@ -19,6 +19,7 @@ import com.androidschool.denis.myreminder.adapters.TabAdapter;
 import com.androidschool.denis.myreminder.alarm.AlarmHelper;
 import com.androidschool.denis.myreminder.database.DBHelper;
 import com.androidschool.denis.myreminder.dialog.AddingTaskDialogFragment;
+import com.androidschool.denis.myreminder.dialog.EditTaskDialogFragment;
 import com.androidschool.denis.myreminder.fragments.CurrentTaskFragment;
 import com.androidschool.denis.myreminder.fragments.DoneTaskFragment;
 import com.androidschool.denis.myreminder.fragments.SplashFragment;
@@ -28,7 +29,9 @@ import com.androidschool.denis.myreminder.model.ModelTask;
 
 public class MainActivity extends AppCompatActivity
         implements AddingTaskDialogFragment.AddingTaskListener,
-        CurrentTaskFragment.OnTaskDoneListener, DoneTaskFragment.OnTaskRestoreListener {
+        CurrentTaskFragment.OnTaskDoneListener,
+        DoneTaskFragment.OnTaskRestoreListener,
+        EditTaskDialogFragment.EditingTaskListener {
 
     FragmentManager fragmentManager;
 
@@ -47,6 +50,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Ads.showBottomBanner(this);
 
         PreferenceHelper.getInstance().init(getApplicationContext());
         preferenceHelper = PreferenceHelper.getInstance();
@@ -72,6 +77,11 @@ public class MainActivity extends AppCompatActivity
     protected void onPause() {
         super.onPause();
         MyApplication.activityPaused();
+    }
+
+    //Чтобы не вылетало приложение, если открыть активити и тут же его свернуть
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
     }
 
     public void runSplash() {
@@ -215,5 +225,20 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onTaskRestore(ModelTask task) {
         currentTaskFragment.addTask(task, false);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!searchView.isIconified()) {
+            searchView.setIconified(true);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onTaskEdited(ModelTask newTask) {
+        currentTaskFragment.updateTask(newTask);
+        dbHelper.update().task(newTask);
     }
 }

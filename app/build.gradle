@@ -42,4 +42,7 @@ dependencies {
     //compile 'de.hdodenhof:circleimageview:+'
     compile 'de.hdodenhof:circleimageview:3.0.0'
 
+    //для подключения рекламы
+    compile 'com.google.android.gms:play-services-ads:7.8.0'
+
 }

@@ -20,6 +20,9 @@
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_error_empty_title">Please, enter the title.</string>
 
+    <!--Диалог для редактирования Таска-->
+    <string name="dialog_editing_title">Editing task</string>
+
     <!--Диалог для удаления Таска-->
     <string name="dialog_removing_message">Do you really want to delete this task?</string>
     <!--сообщение для снекбара-->
@@ -30,6 +33,20 @@
     <string name="task_date">Date</string>
     <string name="task_time">Time</string>
 
+    <!--Заголовки для сепараторов-->
+    <string name="separator_overdue">Overdue</string>
+    <string name="separator_today">Today</string>
+    <string name="separator_tomorrow">Tomorrow</string>
+    <string name="separator_future">Future</string>
 
+
+    <string-array name="priority_levels">
+        <item>Low Priority</item>
+        <item>Normal Priority</item>
+        <item>High Priority</item>
+    </string-array>
+
+
+    <string name="banner_ad_unit_id">ca-app-pub-3829234049178840/1494802502</string>
 
 </resources>

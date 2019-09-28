@@ -18,9 +18,11 @@ import com.androidschool.denis.myreminder.Utils;
 import com.androidschool.denis.myreminder.fragments.CurrentTaskFragment;
 import com.androidschool.denis.myreminder.fragments.TaskFragment;
 import com.androidschool.denis.myreminder.model.Item;
+import com.androidschool.denis.myreminder.model.ModelSeparator;
 import com.androidschool.denis.myreminder.model.ModelTask;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -48,8 +50,13 @@ public class CurrentTasksAdapter extends TaskAdapter {
                 CircleImageView priority = (CircleImageView) v.findViewById(R.id.cvTaskPriority);
 
                 return new TaskViewHolder(v, title, date, priority);
-//            case TYPE_SEPARATOR:
-//                break;
+
+            case TYPE_SEPARATOR:
+                View separator = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.model_separator, viewGroup, false);
+                TextView type = (TextView) separator.findViewById(R.id.tvSeparatorName);
+
+                return new SeparatorViewHolder(separator, type);
             default:
                 return null;
         }
@@ -59,6 +66,8 @@ public class CurrentTasksAdapter extends TaskAdapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         Item item = items.get(position);
 
+        final Resources resources = viewHolder.itemView.getResources();
+
         if (item.isTask()) {
             viewHolder.itemView.setEnabled(true);//?
             final ModelTask task = (ModelTask) item;
@@ -66,7 +75,7 @@ public class CurrentTasksAdapter extends TaskAdapter {
 
             //две локальныйх переменные для удобства и краткости записи
             final View itemView = taskViewHolder.itemView;
-            final Resources resources = itemView.getResources();
+
 
             taskViewHolder.title.setText(task.getTitle());
 
@@ -81,11 +90,27 @@ public class CurrentTasksAdapter extends TaskAdapter {
 
             //itemView.setBackgroundColor(resources.getColor(R.color.gray_50));
 
+            //Условие подсвечивает просроченные таски (меняется фоновый цвет)
+            if (task.getDate() != 0 && task.getDate() < Calendar.getInstance().getTimeInMillis()) {
+                itemView.setBackgroundColor(resources.getColor(R.color.gray_200));
+            } else {
+                itemView.setBackgroundColor(resources.getColor(R.color.gray_50));
+            }
+
             //устанавливаем цвета для текстовых полей TextView и CircleImageView
             taskViewHolder.title.setTextColor(resources.getColor(R.color.primary_text_default_material_light));
             taskViewHolder.date.setTextColor(resources.getColor(R.color.secondary_text_default_material_light));
             taskViewHolder.priority.setColorFilter(resources.getColor(task.getPriorityColor()));
             taskViewHolder.priority.setImageResource(R.drawable.ic_checkbox_blank_circle_white_48dp);
+
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getTaskFragment().showTaskEditDialog(task);
+                }
+            });
+
 
             //по длительному нажатию на itemView запускаем диалоговое окно.
             //При этом делаем задержку, чтобы успела отработать анимация.
@@ -187,6 +212,11 @@ public class CurrentTasksAdapter extends TaskAdapter {
                     flipIn.start();//запуск анимации поворота вокруг вертикальной оси
                 }
             });
+        }else {
+            ModelSeparator separator = (ModelSeparator) item;
+            SeparatorViewHolder separatorViewHolder = (SeparatorViewHolder) viewHolder;
+
+            separatorViewHolder.type.setText(resources.getString(separator.getType()));
         }
     }
 

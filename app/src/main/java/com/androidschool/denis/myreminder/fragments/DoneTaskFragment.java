@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.androidschool.denis.myreminder.R;
-import com.androidschool.denis.myreminder.adapters.DoneTaskAdapter;
+import com.androidschool.denis.myreminder.adapters.DoneTasksAdapter;
 import com.androidschool.denis.myreminder.database.DBHelper;
 import com.androidschool.denis.myreminder.model.ModelTask;
 
@@ -60,7 +60,7 @@ public class DoneTaskFragment extends TaskFragment {
         recyclerView.setLayoutManager(layoutManager);
 
 
-        adapter = new DoneTaskAdapter(this);
+        adapter = new DoneTasksAdapter(this);
         recyclerView.setAdapter(adapter);
 
         return rootView;
@@ -96,11 +96,48 @@ public class DoneTaskFragment extends TaskFragment {
     }
 
     @Override
+    public void addTask(ModelTask newTask, boolean saveToDB) {
+        int position = -1;
+
+        checkAdapter();
+        for (int i = 0; i < adapter.getItemCount(); i++) {
+            if (adapter.getItem(i).isTask()) {
+                ModelTask task = (ModelTask) adapter.getItem(i);
+                if (newTask.getDate() < task.getDate()) {
+                    position = i;
+                    break;
+                }
+            }
+        }
+
+        if (position != -1) {
+            adapter.addItem(position, newTask);
+        } else {
+            adapter.addItem(newTask);
+        }
+
+        if (saveToDB) {
+            activity.dbHelper.saveTask(newTask);
+        }
+
+    }
+
+
+    @Override
     public void moveTask(ModelTask task) {
         if (task.getDate() != 0) {
             alarmHelper.removeAlarm(task.getTimeStamp());
         }
 
         onTaskRestoreListener.onTaskRestore(task);
+    }
+
+    //Если адаптер пустой, то пересоздаём адаптер
+    @Override
+    public void checkAdapter() {
+        if (adapter == null) {
+            adapter = new DoneTasksAdapter(this);
+            addTaskFromDB();
+        }
     }
 }
