@@ -1,6 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-
 <!--чтобы тулбар не отображался поверх сплешскрина, добавим корневой элемент FrameLayout-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
@@ -90,7 +87,8 @@
                 android:layout_margin="@dimen/fab_margin"
                 android:src="@drawable/ic_add_white_24dp"
                 app:layout_anchor="@id/pager"
-                app:layout_anchorGravity="bottom|right|end" />
+                app:layout_anchorGravity="bottom|right|end"
+                app:rippleColor="@color/ripple_material_light"/>
 
             <!--указание местоположения FloatingActionButton
             app:layout_anchor="@id/pager"

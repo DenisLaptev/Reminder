@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,6 +43,8 @@ public class MainActivity extends AppCompatActivity
     TaskFragment currentTaskFragment;
     TaskFragment doneTaskFragment;
 
+    AlarmHelper alarmHelper;
+
     SearchView searchView;
 
     public DBHelper dbHelper;
@@ -57,6 +60,7 @@ public class MainActivity extends AppCompatActivity
         preferenceHelper = PreferenceHelper.getInstance();
 
         AlarmHelper.getInstance().init(getApplicationContext());
+        alarmHelper = AlarmHelper.getInstance();
 
         dbHelper = new DBHelper(getApplicationContext());
 
@@ -71,6 +75,12 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         MyApplication.activityResumed();
+        if (getIntent().getExtras() != null) {
+            Bundle args = getIntent().getExtras();
+            if (args.containsKey("hello")) {
+                Log.d("really?", getIntent().getStringExtra("hello"));
+            }
+        }
     }
 
     @Override
@@ -79,10 +89,12 @@ public class MainActivity extends AppCompatActivity
         MyApplication.activityPaused();
     }
 
+
     //Чтобы не вылетало приложение, если открыть активити и тут же его свернуть
     @Override
     protected void onSaveInstanceState(Bundle outState) {
     }
+
 
     public void runSplash() {
         //код запуска сплэшскрина.
@@ -148,7 +160,7 @@ public class MainActivity extends AppCompatActivity
 
 
         //Создадим TabLayout и добавим вкладки
-        TabLayout tabLayout = findViewById(R.id.tab_layout);
+        final TabLayout tabLayout = findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText(R.string.current_task));
         tabLayout.addTab(tabLayout.newTab().setText(R.string.done_task));
 

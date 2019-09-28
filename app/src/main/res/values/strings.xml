@@ -46,7 +46,10 @@
         <item>High Priority</item>
     </string-array>
 
+    <!--from example-->
+    <!--<string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>-->
 
+    <!--my_banner_ad_unit_id-->
     <string name="banner_ad_unit_id">ca-app-pub-3829234049178840/1494802502</string>
 
 </resources>
