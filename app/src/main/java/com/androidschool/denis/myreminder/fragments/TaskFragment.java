@@ -13,6 +13,7 @@ import com.androidschool.denis.myreminder.MainActivity;
 import com.androidschool.denis.myreminder.R;
 import com.androidschool.denis.myreminder.adapters.CurrentTasksAdapter;
 import com.androidschool.denis.myreminder.adapters.TaskAdapter;
+import com.androidschool.denis.myreminder.alarm.AlarmHelper;
 import com.androidschool.denis.myreminder.model.Item;
 import com.androidschool.denis.myreminder.model.ModelTask;
 
@@ -27,6 +28,8 @@ public abstract class TaskFragment extends Fragment {
 
     public MainActivity activity;
 
+    public AlarmHelper alarmHelper;
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -34,6 +37,8 @@ public abstract class TaskFragment extends Fragment {
         if (getActivity() != null) {
             activity = (MainActivity) getActivity();
         }
+
+        alarmHelper = AlarmHelper.getInstance();
 
         addTaskFromDB();
     }
@@ -106,7 +111,8 @@ public abstract class TaskFragment extends Fragment {
                         public void onViewDetachedFromWindow(View view) {
                             //метод срабатывает, когда снекбар исчезает с экрана
                             if (isRemoved[0]) {
-                                //если не была нажата кнопка отмены удаления, то таск удаляется окончательно з БД
+                                alarmHelper.removeAlarm(timeStamp);
+                                //если не была нажата кнопка отмены удаления, то таск удаляется окончательно из БД
                                 activity.dbHelper.removeTask(timeStamp);
                             }
                         }
@@ -125,6 +131,8 @@ public abstract class TaskFragment extends Fragment {
         }
         dialogBuilder.show();
     }
+
+    public abstract void findTasks(String title);
 
     public abstract void addTaskFromDB();
 

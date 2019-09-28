@@ -8,6 +8,7 @@ import android.app.DialogFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.androidschool.denis.myreminder.adapters.TabAdapter;
+import com.androidschool.denis.myreminder.alarm.AlarmHelper;
 import com.androidschool.denis.myreminder.database.DBHelper;
 import com.androidschool.denis.myreminder.dialog.AddingTaskDialogFragment;
 import com.androidschool.denis.myreminder.fragments.CurrentTaskFragment;
@@ -37,6 +39,8 @@ public class MainActivity extends AppCompatActivity
     TaskFragment currentTaskFragment;
     TaskFragment doneTaskFragment;
 
+    SearchView searchView;
+
     public DBHelper dbHelper;
 
     @Override
@@ -47,6 +51,8 @@ public class MainActivity extends AppCompatActivity
         PreferenceHelper.getInstance().init(getApplicationContext());
         preferenceHelper = PreferenceHelper.getInstance();
 
+        AlarmHelper.getInstance().init(getApplicationContext());
+
         dbHelper = new DBHelper(getApplicationContext());
 
         fragmentManager = getFragmentManager();
@@ -56,6 +62,17 @@ public class MainActivity extends AppCompatActivity
         setUI();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MyApplication.activityResumed();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MyApplication.activityPaused();
+    }
 
     public void runSplash() {
         //код запуска сплэшскрина.
@@ -152,6 +169,21 @@ public class MainActivity extends AppCompatActivity
         currentTaskFragment = (CurrentTaskFragment) tabAdapter.getItem(TabAdapter.CURRENT_TASK_FRAGMENT_POSITION);
         doneTaskFragment = (DoneTaskFragment) tabAdapter.getItem(TabAdapter.DONE_TASK_FRAGMENT_POSITION);
 
+        searchView = (SearchView) findViewById(R.id.search_view);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                currentTaskFragment.findTasks(newText);
+                doneTaskFragment.findTasks(newText);
+                return false;
+            }
+        });
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,7 +198,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onTaskAdded(ModelTask newTask) {
         Toast.makeText(this, "Task added", Toast.LENGTH_LONG).show();
-        currentTaskFragment.addTask(newTask,true);
+        currentTaskFragment.addTask(newTask, true);
 
     }
 
@@ -177,11 +209,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onTaskDone(ModelTask task) {
-        doneTaskFragment.addTask(task,false);
+        doneTaskFragment.addTask(task, false);
     }
 
     @Override
     public void onTaskRestore(ModelTask task) {
-        currentTaskFragment.addTask(task,false);
+        currentTaskFragment.addTask(task, false);
     }
 }

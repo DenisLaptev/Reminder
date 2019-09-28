@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.ColorSpace;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
@@ -22,6 +23,7 @@ import android.widget.TimePicker;
 
 import com.androidschool.denis.myreminder.R;
 import com.androidschool.denis.myreminder.Utils;
+import com.androidschool.denis.myreminder.alarm.AlarmHelper;
 import com.androidschool.denis.myreminder.model.ModelTask;
 
 import java.util.Calendar;
@@ -177,8 +179,12 @@ public class AddingTaskDialogFragment extends DialogFragment {
             public void onClick(DialogInterface dialogInterface, int which) {
                 //присваиваем заголовку таска значение из поля ввода.
                 task.setTitle(etTitle.getText().toString());
+                task.setStatus(ModelTask.STATUS_CURRENT);
                 if (etDate.length() != 0 || etTime.length() != 0) {
                     task.setDate(calendar.getTimeInMillis());
+
+                    AlarmHelper alarmHelper = AlarmHelper.getInstance();
+                    alarmHelper.setAlarm(task);
                 }
 
                 task.setStatus(ModelTask.STATUS_CURRENT);

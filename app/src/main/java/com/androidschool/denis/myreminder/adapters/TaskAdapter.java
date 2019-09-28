@@ -49,6 +49,14 @@ public abstract class TaskAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
+    public void removeAllItems() {
+        if (getItemCount() != 0) {
+            //Чтобы не удалять в цикле, присвоим пустой список.
+            items = new ArrayList<>();
+            notifyDataSetChanged();
+        }
+    }
+
     @Override
     public int getItemCount() {
         return items.size();
@@ -61,7 +69,7 @@ public abstract class TaskAdapter extends RecyclerView.Adapter<RecyclerView.View
         protected TextView date;
         protected CircleImageView priority;
 
-        public TaskViewHolder(@NonNull View itemView, TextView title, TextView date,CircleImageView priority) {
+        public TaskViewHolder(@NonNull View itemView, TextView title, TextView date, CircleImageView priority) {
             super(itemView);
             this.title = title;
             this.date = date;
